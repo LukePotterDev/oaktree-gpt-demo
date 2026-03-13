@@ -1,3 +1,130 @@
+# ChatGPT Custom GPT Setup Guide
+
+Connect the Enterprise GPT Demo API to a Custom GPT so it can query simulated financial services data in real time.
+
+**API URL:** `https://oaktree-gpt-demo-production.up.railway.app`
+**API Key:** `demo-key-2026`
+**Web Dashboard (to show data visually):** `https://oaktree-gpt-web-production.up.railway.app`
+
+---
+
+## Step 1: Open the GPT Editor
+
+1. Go to **https://chatgpt.com**
+2. Click your name/avatar (bottom-left) → **My GPTs**
+3. Click **+ Create a GPT** (top right)
+4. You'll land on the GPT Builder. Click the **Configure** tab at the top.
+
+---
+
+## Step 2: Set the Name and Description
+
+| Field | Value |
+|-------|-------|
+| **Name** | `Financial Services Assistant` |
+| **Description** | `Queries enterprise systems to prepare meeting briefs, review onboarding cases, and generate risk memos.` |
+
+---
+
+## Step 3: Paste the System Prompt (Instructions)
+
+In the **Instructions** box, paste the entire contents below:
+
+```
+You are a Financial Services Workflow Assistant built for investment professionals at an asset management firm.
+
+You help prepare client meeting briefs, review onboarding cases, generate risk memos, and manage follow-up tasks.
+
+## Your Data Sources
+
+You have access to enterprise systems via API:
+- Client Data — client profiles, holdings/positions, CRM notes
+- Research — analyst research notes by fund/issuer
+- Events — market events, fund updates, regulatory news
+- Onboarding — new client/product onboarding cases with document tracking
+- Screening — KYC/AML compliance screening results
+- Risk — portfolio risk metrics, performance, sector exposure, risk flags
+
+## Rules
+
+1. Always query the API first. Never guess or fabricate data. If the user asks about a client, fund, or case — call the appropriate endpoint.
+
+2. Separate facts from recommendations. Present data clearly, then offer analysis or suggestions separately.
+
+3. Be concise and executive-ready. Use this output structure:
+   - Summary — Key facts in 2-3 sentences
+   - Evidence — Supporting data points
+   - Risks — What could go wrong or needs attention
+   - Recommended Next Steps — Actionable items
+
+4. Write operations require explicit confirmation. Before creating a CRM note, compliance case, or task:
+   - Show the user exactly what will be written
+   - Ask: "Should I go ahead and save this?"
+   - Only proceed when they confirm
+
+5. Cross-reference when useful. A meeting prep request should pull client profile, positions, research on their holdings, AND recent events. An onboarding review should also check screening results.
+
+6. If information is missing, say what is missing. Don't fill gaps with assumptions.
+
+## Three Core Workflows
+
+### 1. Client Meeting Prep
+When asked to prepare for a client meeting:
+- Pull client profile (contacts, mandate, notes)
+- Pull current positions/holdings
+- Pull research notes on their key holdings
+- Pull recent events for those holdings
+- Synthesize into a meeting brief with talking points and likely questions
+
+### 2. Onboarding Review
+When asked to review an onboarding case:
+- Pull onboarding case details
+- Highlight missing documents and deadlines
+- Surface any exceptions that need approval
+- Check related screening/compliance status
+- Recommend next steps with owners and dates
+
+### 3. Risk Memo
+When asked to generate a risk memo:
+- Pull portfolio risk metrics and performance
+- Highlight risk flags and their severity
+- Show sector exposure changes
+- Include weekly commentary
+- Format as a professional risk memo
+
+## Limitations
+- You can READ all data sources freely
+- You can WRITE to CRM notes, compliance cases, and tasks — but only with user confirmation
+- Do not provide investment advice or recommendations on specific securities
+- All data comes from the connected API — you have no other data sources
+```
+
+---
+
+## Step 4: Add the API Action (this is the key part)
+
+1. Scroll down to **Actions** and click **Create new action**
+2. You'll see three sections: **Authentication**, **Schema**, and a test area
+
+### 4a: Set Authentication
+
+1. Click **Authentication** (gear icon or link)
+2. Choose **API Key**
+3. Set these values:
+
+| Field | Value |
+|-------|-------|
+| **API Key** | `demo-key-2026` |
+| **Auth Type** | `API Key` |
+| **Custom Header Name** | `X-API-Key` |
+
+4. Click **Save**
+
+### 4b: Paste the OpenAPI Schema
+
+In the **Schema** box, delete anything there and paste this entire YAML:
+
+```yaml
 openapi: 3.0.0
 info:
   title: Enterprise GPT 301 Demo API
@@ -308,3 +435,95 @@ components:
       type: apiKey
       in: header
       name: X-API-Key
+```
+
+### 4c: Verify It Loaded
+
+After pasting, you should see a list of **Available Actions** appear below the schema box:
+
+- listClients
+- getClient
+- getClientPositions
+- getResearch
+- listResearch
+- getEvents
+- getOnboarding
+- listOnboarding
+- getScreening
+- getRisk
+- listPortfolios
+- createCRMNote
+- createComplianceCase
+- createTask
+
+If you see all 14, you're good. If you see errors, check for copy/paste issues (extra whitespace, truncated text).
+
+---
+
+## Step 5: Set Privacy Policy (required)
+
+In the Action editor, there's a **Privacy policy URL** field at the bottom. Enter:
+
+```
+https://oaktree-gpt-demo-production.up.railway.app/health
+```
+
+(This is just a placeholder — it's a valid URL on our server. For a real deployment you'd use an actual privacy policy page.)
+
+---
+
+## Step 6: Save and Test
+
+1. Click **Save** (top right) → choose **Only me** for now
+2. You'll be taken to the GPT chat interface
+3. The first time you use an action, ChatGPT will show a confirmation popup asking to allow the API connection. Click **Allow** or **Always allow**.
+
+---
+
+## Step 7: Try These Demo Prompts
+
+### Demo 1: Client Meeting Prep
+```
+Prepare me for tomorrow's meeting with Northshore Pension Fund.
+```
+The GPT should call multiple endpoints (client profile, positions, research, events) and synthesize a meeting brief.
+
+### Demo 2: Onboarding Review
+```
+Review onboarding case ONB-2001 and tell me what's outstanding.
+```
+The GPT should pull the case, highlight missing documents and exceptions, check the screening status, and recommend next steps.
+
+### Demo 3: Risk Memo
+```
+Generate this week's risk memo for the Strategic Income Composite.
+```
+The GPT should pull portfolio risk data, performance, sector exposure, risk flags, and format a professional memo.
+
+### Demo 4: Write-Back (CRM Note)
+```
+Add a CRM note to Northshore Pension Fund summarizing our meeting prep findings.
+```
+The GPT should draft the note, show it to you, ask for confirmation, then write it to the API.
+
+---
+
+## Troubleshooting
+
+| Problem | Fix |
+|---------|-----|
+| "Could not connect to server" | Check that Railway is up: visit `https://oaktree-gpt-demo-production.up.railway.app/health` in your browser. Should return `{"status": "ok"}` |
+| Actions not appearing | Make sure you pasted the full YAML schema without truncation. Check for a red error message below the schema box. |
+| "Unauthorized" errors | Verify the API Key auth is set to `demo-key-2026` with header name `X-API-Key` |
+| GPT asks to "allow" every time | Click "Always allow" on the first confirmation popup |
+| GPT makes up data instead of calling API | Check that the Instructions include "Always query the API first. Never guess or fabricate data." |
+
+---
+
+## Showing the Web Dashboard During Demo
+
+Before or after the ChatGPT demo, open the web dashboard to show the underlying data:
+
+**https://oaktree-gpt-web-production.up.railway.app**
+
+Talk track: "Here's the simulated enterprise data. We've got client profiles from what would be your CRM, portfolio holdings, analyst research, onboarding cases, compliance screening, and risk reports. The GPT you just saw is querying this exact data in real time through API Actions."
