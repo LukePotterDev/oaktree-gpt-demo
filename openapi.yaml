@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: Oaktree GPT 301 Demo API
+  title: Enterprise GPT 301 Demo API
   description: |
     Mock enterprise API for financial services workflows.
     Simulates client data (Salesforce), research, events, onboarding,
@@ -64,7 +64,7 @@ paths:
     get:
       operationId: getResearch
       summary: Get research notes for an issuer
-      description: "Returns analyst research notes for a specific fund/issuer. Available slugs: oaktree-distressed-debt-v, oaktree-strategic-income, oaktree-re-opportunity-iv"
+      description: "Returns analyst research notes for a specific fund/issuer. Available slugs: crestmark-distressed-debt-v, crestmark-strategic-income, crestmark-re-opportunity-iv"
       parameters:
         - name: issuer_slug
           in: path
@@ -94,7 +94,7 @@ paths:
     get:
       operationId: getEvents
       summary: Get recent events for an issuer
-      description: "Returns recent market events, fund updates, and regulatory news for a fund/issuer. Available slugs: oaktree-distressed-debt-v, oaktree-strategic-income, oaktree-re-opportunity-iv"
+      description: "Returns recent market events, fund updates, and regulatory news for a fund/issuer. Available slugs: crestmark-distressed-debt-v, crestmark-strategic-income, crestmark-re-opportunity-iv"
       parameters:
         - name: issuer_slug
           in: path

@@ -1,5 +1,5 @@
 """
-Automated test suite for the Oaktree GPT 301 Demo API.
+Automated test suite for the Crestmark GPT 301 Demo API.
 
 Tests every endpoint against expected data, validates response structures,
 and runs the 3 demo workflow sequences end-to-end.
@@ -119,8 +119,8 @@ class TestClients:
         assert data["total_market_value"] == 3_800_000_000
         assert data["positions_count"] == 10
         securities = [p["security"] for p in data["positions"]]
-        assert "Oaktree Distressed Debt Fund V" in securities
-        assert "Oaktree Strategic Income Fund" in securities
+        assert "Crestmark Distressed Debt Fund V" in securities
+        assert "Crestmark Strategic Income Fund" in securities
         # Verify allocations sum to ~100%
         total_alloc = sum(p["allocation_pct"] for p in data["positions"])
         assert 99.5 <= total_alloc <= 100.5
@@ -147,12 +147,12 @@ class TestResearch:
         status, data = api_get("/research")
         assert status == 200
         slugs = [i["slug"] for i in data["issuers"]]
-        assert "oaktree-distressed-debt-v" in slugs
-        assert "oaktree-strategic-income" in slugs
-        assert "oaktree-re-opportunity-iv" in slugs
+        assert "crestmark-distressed-debt-v" in slugs
+        assert "crestmark-strategic-income" in slugs
+        assert "crestmark-re-opportunity-iv" in slugs
 
     def test_distressed_debt_research(self):
-        status, data = api_get("/research/oaktree-distressed-debt-v")
+        status, data = api_get("/research/crestmark-distressed-debt-v")
         assert status == 200
         assert data["total"] == 2
         assert data["notes"][0]["analyst"] == "Karen Wu"
@@ -160,7 +160,7 @@ class TestResearch:
         assert data["notes"][0]["conviction"] == "High"
 
     def test_strategic_income_research(self):
-        status, data = api_get("/research/oaktree-strategic-income")
+        status, data = api_get("/research/crestmark-strategic-income")
         assert status == 200
         assert data["total"] == 2
         # Verify yield mentioned in research
@@ -178,7 +178,7 @@ class TestResearch:
 
 class TestEvents:
     def test_distressed_debt_events(self):
-        status, data = api_get("/events/oaktree-distressed-debt-v")
+        status, data = api_get("/events/crestmark-distressed-debt-v")
         assert status == 200
         assert data["total"] == 3
         types = [e["type"] for e in data["events"]]
@@ -187,7 +187,7 @@ class TestEvents:
         assert "Regulatory" in types
 
     def test_strategic_income_events(self):
-        status, data = api_get("/events/oaktree-strategic-income")
+        status, data = api_get("/events/crestmark-strategic-income")
         assert status == 200
         assert data["total"] == 2
         # Fed rate decision should be in events
@@ -436,19 +436,19 @@ class TestDemo1_ClientMeetingPrep:
     def test_research_available_for_key_holdings(self):
         # Get positions first
         _, positions = api_get("/client/CLI-001/positions")
-        oaktree_holdings = [
+        crestmark_holdings = [
             p for p in positions["positions"]
-            if "Oaktree" in p["security"]
+            if "Crestmark" in p["security"]
         ]
-        assert len(oaktree_holdings) >= 3, "Northshore should have 3+ Oaktree fund holdings"
+        assert len(crestmark_holdings) >= 3, "Northshore should have 3+ Crestmark fund holdings"
 
         # Research should exist for key funds
-        status, data = api_get("/research/oaktree-distressed-debt-v")
+        status, data = api_get("/research/crestmark-distressed-debt-v")
         assert status == 200
         assert len(data["notes"]) >= 1
 
     def test_events_available_for_holdings(self):
-        status, data = api_get("/events/oaktree-distressed-debt-v")
+        status, data = api_get("/events/crestmark-distressed-debt-v")
         assert status == 200
         assert len(data["events"]) >= 1
         # Events should be recent
@@ -589,13 +589,13 @@ class TestDataIntegrity:
 
     def test_research_dates_are_recent(self):
         """All research notes should be from 2026."""
-        _, data = api_get("/research/oaktree-distressed-debt-v")
+        _, data = api_get("/research/crestmark-distressed-debt-v")
         for note in data["notes"]:
             assert note["date"].startswith("2026-"), f"Research note dated {note['date']} is not from 2026"
 
     def test_events_have_impact_assessment(self):
         """Every event should have an impact assessment."""
-        for slug in ["oaktree-distressed-debt-v", "oaktree-strategic-income", "oaktree-re-opportunity-iv"]:
+        for slug in ["crestmark-distressed-debt-v", "crestmark-strategic-income", "crestmark-re-opportunity-iv"]:
             _, data = api_get(f"/events/{slug}")
             for event in data["events"]:
                 assert "impact" in event

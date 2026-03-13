@@ -1,11 +1,11 @@
 """
-Oaktree Capital GPT 301 Workshop — Mock Enterprise API Server
+GPT 301 Workshop — Mock Enterprise API Server
 
 Simulates financial services workflows for demonstrating how ChatGPT
 Custom GPTs connect to enterprise systems via API Actions.
 
 Endpoints match the GPT 301 Checklist specification exactly.
-All data is synthetic. No real Oaktree data is used.
+All data is synthetic. No real client data is used.
 """
 
 from fastapi import FastAPI, HTTPException, Security, Depends
@@ -17,7 +17,7 @@ from typing import Optional
 import uuid
 
 app = FastAPI(
-    title="Oaktree GPT 301 Demo API",
+    title="Enterprise GPT 301 Demo API",
     description="Mock enterprise API for ChatGPT Actions workshop — financial services workflows",
     version="2.0.0",
 )
@@ -93,24 +93,24 @@ CLIENTS = {
 
 POSITIONS = {
     "CLI-001": [
-        {"security": "Oaktree Distressed Debt Fund V", "asset_class": "Alternatives — Credit", "market_value": 285_000_000, "allocation_pct": 7.5, "inception": "2023-01-15", "ytd_return": 8.2, "status": "Active"},
-        {"security": "Oaktree Real Estate Opportunity IV", "asset_class": "Alternatives — Real Estate", "market_value": 190_000_000, "allocation_pct": 5.0, "inception": "2022-06-01", "ytd_return": 4.1, "status": "Active"},
-        {"security": "Oaktree Strategic Income Fund", "asset_class": "Fixed Income — High Yield", "market_value": 380_000_000, "allocation_pct": 10.0, "inception": "2020-09-15", "ytd_return": 5.7, "status": "Active"},
+        {"security": "Crestmark Distressed Debt Fund V", "asset_class": "Alternatives — Credit", "market_value": 285_000_000, "allocation_pct": 7.5, "inception": "2023-01-15", "ytd_return": 8.2, "status": "Active"},
+        {"security": "Crestmark Real Estate Opportunity IV", "asset_class": "Alternatives — Real Estate", "market_value": 190_000_000, "allocation_pct": 5.0, "inception": "2022-06-01", "ytd_return": 4.1, "status": "Active"},
+        {"security": "Crestmark Strategic Income Fund", "asset_class": "Fixed Income — High Yield", "market_value": 380_000_000, "allocation_pct": 10.0, "inception": "2020-09-15", "ytd_return": 5.7, "status": "Active"},
         {"security": "MSCI ACWI Index Fund", "asset_class": "Equity — Global", "market_value": 1_140_000_000, "allocation_pct": 30.0, "inception": "2014-06-15", "ytd_return": 7.3, "status": "Active"},
         {"security": "S&P 500 Index Fund", "asset_class": "Equity — US Large Cap", "market_value": 570_000_000, "allocation_pct": 15.0, "inception": "2014-06-15", "ytd_return": 8.9, "status": "Active"},
         {"security": "Bloomberg Aggregate Bond Fund", "asset_class": "Fixed Income — Investment Grade", "market_value": 760_000_000, "allocation_pct": 20.0, "inception": "2014-06-15", "ytd_return": 2.1, "status": "Active"},
-        {"security": "Oaktree Infrastructure Co-Invest II", "asset_class": "Alternatives — Infrastructure", "market_value": 152_000_000, "allocation_pct": 4.0, "inception": "2024-03-01", "ytd_return": 6.8, "status": "Active"},
+        {"security": "Crestmark Infrastructure Co-Invest II", "asset_class": "Alternatives — Infrastructure", "market_value": 152_000_000, "allocation_pct": 4.0, "inception": "2024-03-01", "ytd_return": 6.8, "status": "Active"},
         {"security": "TIPS Fund", "asset_class": "Fixed Income — Inflation Protected", "market_value": 171_000_000, "allocation_pct": 4.5, "inception": "2021-01-10", "ytd_return": 1.9, "status": "Active"},
         {"security": "Emerging Markets Equity Fund", "asset_class": "Equity — EM", "market_value": 114_000_000, "allocation_pct": 3.0, "inception": "2018-07-01", "ytd_return": 3.4, "status": "Active"},
         {"security": "Cash & Equivalents", "asset_class": "Cash", "market_value": 38_000_000, "allocation_pct": 1.0, "inception": "2014-06-15", "ytd_return": 4.8, "status": "Active"},
     ],
     "CLI-002": [
-        {"security": "Oaktree Real Estate Opportunity IV", "asset_class": "Alternatives — Real Estate", "market_value": 93_000_000, "allocation_pct": 15.0, "inception": "2022-06-01", "ytd_return": 4.1, "status": "Active"},
-        {"security": "Oaktree Strategic Income Fund", "asset_class": "Fixed Income — High Yield", "market_value": 62_000_000, "allocation_pct": 10.0, "inception": "2021-04-15", "ytd_return": 5.7, "status": "Active"},
+        {"security": "Crestmark Real Estate Opportunity IV", "asset_class": "Alternatives — Real Estate", "market_value": 93_000_000, "allocation_pct": 15.0, "inception": "2022-06-01", "ytd_return": 4.1, "status": "Active"},
+        {"security": "Crestmark Strategic Income Fund", "asset_class": "Fixed Income — High Yield", "market_value": 62_000_000, "allocation_pct": 10.0, "inception": "2021-04-15", "ytd_return": 5.7, "status": "Active"},
         {"security": "US Treasury Bond Ladder", "asset_class": "Fixed Income — Government", "market_value": 186_000_000, "allocation_pct": 30.0, "inception": "2019-03-01", "ytd_return": 2.8, "status": "Active"},
         {"security": "Gold & Precious Metals Fund", "asset_class": "Commodities", "market_value": 62_000_000, "allocation_pct": 10.0, "inception": "2020-11-01", "ytd_return": 12.4, "status": "Active"},
         {"security": "S&P 500 Index Fund", "asset_class": "Equity — US Large Cap", "market_value": 124_000_000, "allocation_pct": 20.0, "inception": "2019-03-01", "ytd_return": 8.9, "status": "Active"},
-        {"security": "Oaktree Infrastructure Co-Invest II", "asset_class": "Alternatives — Infrastructure", "market_value": 62_000_000, "allocation_pct": 10.0, "inception": "2024-03-01", "ytd_return": 6.8, "status": "Active"},
+        {"security": "Crestmark Infrastructure Co-Invest II", "asset_class": "Alternatives — Infrastructure", "market_value": 62_000_000, "allocation_pct": 10.0, "inception": "2024-03-01", "ytd_return": 6.8, "status": "Active"},
         {"security": "Cash & Equivalents", "asset_class": "Cash", "market_value": 31_000_000, "allocation_pct": 5.0, "inception": "2019-03-01", "ytd_return": 4.8, "status": "Active"},
     ],
 }
@@ -120,16 +120,16 @@ POSITIONS = {
 # =============================================================================
 
 RESEARCH = {
-    "oaktree-distressed-debt-v": [
-        {"id": "RES-001", "issuer": "Oaktree Distressed Debt Fund V", "date": "2026-03-08", "analyst": "Karen Wu", "title": "Q4 2025 Performance Review", "summary": "Fund returned 3.1% in Q4, outperforming benchmark by 140bps. Key drivers: restructuring gains in energy sector holdings and early recovery in commercial real estate debt. Pipeline of new opportunities remains strong as regional bank stress creates dislocated credit.", "rating": "Overweight", "conviction": "High"},
-        {"id": "RES-002", "issuer": "Oaktree Distressed Debt Fund V", "date": "2026-02-15", "analyst": "Karen Wu", "title": "Sector Outlook: Distressed Credit 2026", "summary": "Expect elevated default cycle in commercial real estate and mid-market leveraged loans through H1 2026. Fund well-positioned with dry powder of $1.2B. Regional banking stress creating opportunities in performing but dislocated credits.", "rating": "Overweight", "conviction": "High"},
+    "crestmark-distressed-debt-v": [
+        {"id": "RES-001", "issuer": "Crestmark Distressed Debt Fund V", "date": "2026-03-08", "analyst": "Karen Wu", "title": "Q4 2025 Performance Review", "summary": "Fund returned 3.1% in Q4, outperforming benchmark by 140bps. Key drivers: restructuring gains in energy sector holdings and early recovery in commercial real estate debt. Pipeline of new opportunities remains strong as regional bank stress creates dislocated credit.", "rating": "Overweight", "conviction": "High"},
+        {"id": "RES-002", "issuer": "Crestmark Distressed Debt Fund V", "date": "2026-02-15", "analyst": "Karen Wu", "title": "Sector Outlook: Distressed Credit 2026", "summary": "Expect elevated default cycle in commercial real estate and mid-market leveraged loans through H1 2026. Fund well-positioned with dry powder of $1.2B. Regional banking stress creating opportunities in performing but dislocated credits.", "rating": "Overweight", "conviction": "High"},
     ],
-    "oaktree-strategic-income": [
-        {"id": "RES-003", "issuer": "Oaktree Strategic Income Fund", "date": "2026-03-05", "analyst": "Michael Torres", "title": "Strategic Income: Yield Compression Watch", "summary": "Spreads have tightened 45bps since December. Fund maintaining shorter duration positioning. Recommend monitoring for rotation opportunity if spreads widen in Q2. Current yield: 7.2%, duration: 3.4 years.", "rating": "Neutral", "conviction": "Medium"},
-        {"id": "RES-004", "issuer": "Oaktree Strategic Income Fund", "date": "2026-01-20", "analyst": "Michael Torres", "title": "Annual Strategy Review", "summary": "Fund outperformed benchmark by 210bps in 2025. Manager alpha primarily from security selection in BB-rated credits. Recommend maintaining current allocation. Key risk: rapid rate cuts could compress yields faster than expected.", "rating": "Overweight", "conviction": "High"},
+    "crestmark-strategic-income": [
+        {"id": "RES-003", "issuer": "Crestmark Strategic Income Fund", "date": "2026-03-05", "analyst": "Michael Torres", "title": "Strategic Income: Yield Compression Watch", "summary": "Spreads have tightened 45bps since December. Fund maintaining shorter duration positioning. Recommend monitoring for rotation opportunity if spreads widen in Q2. Current yield: 7.2%, duration: 3.4 years.", "rating": "Neutral", "conviction": "Medium"},
+        {"id": "RES-004", "issuer": "Crestmark Strategic Income Fund", "date": "2026-01-20", "analyst": "Michael Torres", "title": "Annual Strategy Review", "summary": "Fund outperformed benchmark by 210bps in 2025. Manager alpha primarily from security selection in BB-rated credits. Recommend maintaining current allocation. Key risk: rapid rate cuts could compress yields faster than expected.", "rating": "Overweight", "conviction": "High"},
     ],
-    "oaktree-re-opportunity-iv": [
-        {"id": "RES-005", "issuer": "Oaktree Real Estate Opportunity IV", "date": "2026-02-28", "analyst": "Jennifer Park", "title": "Real Estate Fund Update: Office Repositioning", "summary": "Three office-to-mixed-use conversions on track. Chicago asset 60% leased (ahead of plan). NYC asset permitting delayed 2 months but economics still attractive. Fund overall: 1.15x MOIC, 9.2% net IRR. Distributions expected to accelerate H2 2026.", "rating": "Overweight", "conviction": "Medium"},
+    "crestmark-re-opportunity-iv": [
+        {"id": "RES-005", "issuer": "Crestmark Real Estate Opportunity IV", "date": "2026-02-28", "analyst": "Jennifer Park", "title": "Real Estate Fund Update: Office Repositioning", "summary": "Three office-to-mixed-use conversions on track. Chicago asset 60% leased (ahead of plan). NYC asset permitting delayed 2 months but economics still attractive. Fund overall: 1.15x MOIC, 9.2% net IRR. Distributions expected to accelerate H2 2026.", "rating": "Overweight", "conviction": "Medium"},
     ],
 }
 
@@ -138,16 +138,16 @@ RESEARCH = {
 # =============================================================================
 
 EVENTS = {
-    "oaktree-distressed-debt-v": [
+    "crestmark-distressed-debt-v": [
         {"date": "2026-03-10", "type": "Market Event", "headline": "Regional Bank CRE Losses Widen", "detail": "Three mid-size regional banks reported higher-than-expected CRE loan losses in Q4 filings. Distressed debt funds positioned to acquire performing loans at discount.", "impact": "Positive — expands fund's opportunity set", "relevance": "High"},
         {"date": "2026-03-03", "type": "Fund Update", "headline": "New Investment: Redstone Energy Restructuring", "detail": "Fund acquired $180M of senior secured debt in Redstone Energy at 72 cents on the dollar. Company entering consensual restructuring. Expected recovery: 90-95 cents.", "impact": "Positive — high-conviction position", "relevance": "High"},
         {"date": "2026-02-20", "type": "Regulatory", "headline": "SEC Proposes New Distressed Fund Reporting Requirements", "detail": "Proposed rule would require quarterly position-level reporting for funds over $500M in distressed assets. Comment period open through April 15.", "impact": "Neutral — operational cost increase, no investment impact", "relevance": "Medium"},
     ],
-    "oaktree-strategic-income": [
+    "crestmark-strategic-income": [
         {"date": "2026-03-11", "type": "Market Event", "headline": "Fed Holds Rates Steady, Signals June Cut", "detail": "Federal Reserve held fed funds rate at 4.25-4.50%. Dot plot suggests two cuts in 2026, likely starting June. Bond markets rallied on the news.", "impact": "Positive — supports credit valuations", "relevance": "High"},
         {"date": "2026-03-01", "type": "Fund Update", "headline": "Distribution: $0.042/unit for February", "detail": "Monthly distribution of $0.042/unit, annualized yield of 7.2%. Distribution covered 1.1x by earnings.", "impact": "Neutral — in line with expectations", "relevance": "Medium"},
     ],
-    "oaktree-re-opportunity-iv": [
+    "crestmark-re-opportunity-iv": [
         {"date": "2026-03-07", "type": "Market Event", "headline": "Office Vacancy Rate Stabilizes at 18.2%", "detail": "National office vacancy rate held steady for second consecutive quarter. Conversion economics increasingly favorable as new supply drops. Fund's repositioning thesis gaining traction.", "impact": "Positive — validates fund strategy", "relevance": "High"},
         {"date": "2026-02-14", "type": "Fund Update", "headline": "Chicago Mixed-Use Asset: Phase 1 Leasing Complete", "detail": "215 Wacker Drive conversion reached 60% leased milestone, 3 months ahead of schedule. Anchor tenant: Midwest Regional Health System (12-year lease).", "impact": "Positive — de-risks largest position", "relevance": "High"},
     ],
@@ -167,7 +167,7 @@ ONBOARDING = {
         "target_completion": "2026-03-31",
         "assigned_to": "David Park",
         "investment_amount": 250_000_000,
-        "products": ["Oaktree Strategic Income Fund", "Oaktree Distressed Debt Fund V"],
+        "products": ["Crestmark Strategic Income Fund", "Crestmark Distressed Debt Fund V"],
         "documents": {
             "received": [
                 {"name": "Investment Policy Statement", "date_received": "2026-02-20", "status": "Approved"},
@@ -197,7 +197,7 @@ ONBOARDING = {
         "target_completion": "2026-02-28",
         "assigned_to": "James Morrison",
         "investment_amount": 175_000_000,
-        "products": ["Oaktree Infrastructure Co-Invest II"],
+        "products": ["Crestmark Infrastructure Co-Invest II"],
         "documents": {
             "received": [
                 {"name": "Investment Policy Statement", "date_received": "2026-01-15", "status": "Approved"},
@@ -447,7 +447,7 @@ def list_clients(_: str = Depends(verify_key)):
 
 @app.get("/research/{issuer_slug}", tags=["Research (e.g. Internal Research Platform)"])
 def get_research(issuer_slug: str, _: str = Depends(verify_key)):
-    """Get research notes for an issuer. Use slugs like 'oaktree-distressed-debt-v', 'oaktree-strategic-income', 'oaktree-re-opportunity-iv'."""
+    """Get research notes for an issuer. Use slugs like 'crestmark-distressed-debt-v', 'crestmark-strategic-income', 'crestmark-re-opportunity-iv'."""
     if issuer_slug not in RESEARCH:
         raise HTTPException(
             status_code=404,

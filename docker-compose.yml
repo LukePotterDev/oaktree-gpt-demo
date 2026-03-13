@@ -1,5 +1,5 @@
 services:
-  oaktree-gpt-demo:
+  enterprise-gpt-demo:
     build: .
     ports:
       - "8000:8000"
@@ -7,14 +7,14 @@ services:
       - PYTHONUNBUFFERED=1
     restart: unless-stopped
 
-  oaktree-gpt-web:
+  enterprise-gpt-web:
     build: ./web
     ports:
       - "5050:5000"
     environment:
       - PYTHONUNBUFFERED=1
-      - API_BASE_URL=http://oaktree-gpt-demo:8000
+      - API_BASE_URL=http://enterprise-gpt-demo:8000
       - API_KEY=demo-key-2026
     depends_on:
-      - oaktree-gpt-demo
+      - enterprise-gpt-demo
     restart: unless-stopped

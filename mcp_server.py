@@ -1,5 +1,5 @@
 """
-MCP Server wrapping the Oaktree GPT 301 Demo API.
+MCP Server wrapping the Crestmark GPT 301 Demo API.
 
 Gives Claude the same tool-calling capabilities that ChatGPT Actions would provide.
 """
@@ -13,7 +13,7 @@ API_BASE = "http://localhost:8000"
 API_KEY = "demo-key-2026"
 
 mcp = FastMCP(
-    "Oaktree Deal Intelligence",
+    "Crestmark Deal Intelligence",
     instructions=(
         "You are a Financial Services Workflow Assistant for an investment firm. "
         "Use these tools to prepare client meeting briefs, review onboarding cases, "
@@ -81,7 +81,7 @@ def list_research() -> str:
 
 @mcp.tool()
 def get_research(issuer_slug: str) -> str:
-    """Get analyst research notes for a fund/issuer. Slugs: oaktree-distressed-debt-v, oaktree-strategic-income, oaktree-re-opportunity-iv."""
+    """Get analyst research notes for a fund/issuer. Slugs: crestmark-distressed-debt-v, crestmark-strategic-income, crestmark-re-opportunity-iv."""
     return json.dumps(_api_get(f"/research/{issuer_slug}"), indent=2)
 
 

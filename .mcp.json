@@ -1,9 +1,9 @@
 {
   "mcpServers": {
-    "oaktree-demo": {
-      "command": "/Volumes/Satechi External 500GB/My Drive - luke@ceramiclabs.ai/3. PARA - Resources/04 - Digital Workforce/00 - Gretchen - Executive Assistant/projects/oaktree-gpt-demo/.venv/bin/python3",
+    "enterprise-demo": {
+      "command": "/Volumes/Satechi External 500GB/My Drive - luke@ceramiclabs.ai/3. PARA - Resources/04 - Digital Workforce/00 - Gretchen - Executive Assistant/projects/enterprise-gpt-demo/.venv/bin/python3",
       "args": [
-        "/Volumes/Satechi External 500GB/My Drive - luke@ceramiclabs.ai/3. PARA - Resources/04 - Digital Workforce/00 - Gretchen - Executive Assistant/projects/oaktree-gpt-demo/mcp_server.py"
+        "/Volumes/Satechi External 500GB/My Drive - luke@ceramiclabs.ai/3. PARA - Resources/04 - Digital Workforce/00 - Gretchen - Executive Assistant/projects/enterprise-gpt-demo/mcp_server.py"
       ]
     }
   }

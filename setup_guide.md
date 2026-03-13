@@ -1,4 +1,4 @@
-# Oaktree GPT 301 Workshop — Demo Setup Guide
+# Enterprise GPT 301 Workshop — Demo Setup Guide
 
 ## What This Is
 

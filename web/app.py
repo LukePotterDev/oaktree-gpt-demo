@@ -1,5 +1,5 @@
 """
-Oaktree GPT Demo — Web Dashboard
+Enterprise GPT Demo — Web Dashboard
 Flask frontend for viewing simulated enterprise data.
 """
 
