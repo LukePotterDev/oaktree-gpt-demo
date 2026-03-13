@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% block title %}{{ data.portfolio_name }} — Risk{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="/">Dashboard</a></li><li class="breadcrumb-item"><a href="/risk">Risk</a></li><li class="breadcrumb-item active">{{ data.portfolio_name }}</li></ol></nav>
+
+<h2 class="mb-2">{{ data.portfolio_name }}</h2>
+<p class="text-muted mb-4">As of {{ data.as_of_date }} &middot; Benchmark: {{ data.benchmark }}</p>
+
+<!-- Performance -->
+<div class="row g-3 mb-4">
+    {% set perf = data.performance %}
+    {% for label, val in [('MTD', perf.mtd), ('QTD', perf.qtd), ('YTD', perf.ytd), ('1Y', perf.one_year), ('Since Inception', perf.since_inception_ann)] %}
+    {% if val is not none %}
+    <div class="col">
+        <div class="card stat-card">
+            <div class="stat-value {% if val > 0 %}text-success{% else %}text-danger{% endif %}">{% if val > 0 %}+{% endif %}{{ val }}%</div>
+            <div class="stat-label">{{ label }}</div>
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+    <div class="col">
+        <div class="card stat-card">
+            <div class="stat-value text-info">+{{ perf.excess_return_ytd }}%</div>
+            <div class="stat-label">YTD Excess</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <!-- Risk Metrics -->
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header"><h5 class="mb-0"><i class="fas fa-tachometer-alt me-2"></i>Risk Metrics</h5></div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    {% set rm = data.risk_metrics %}
+                    {% if rm.duration is not none %}<tr><td class="text-muted">Duration</td><td>{{ rm.duration }}</td></tr>{% endif %}
+                    {% if rm.yield_to_worst is not none %}<tr><td class="text-muted">Yield to Worst</td><td>{{ rm.yield_to_worst }}%</td></tr>{% endif %}
+                    {% if rm.spread_duration is not none %}<tr><td class="text-muted">Spread Duration</td><td>{{ rm.spread_duration }}</td></tr>{% endif %}
+                    {% if rm.average_credit_quality is not none %}<tr><td class="text-muted">Avg Credit Quality</td><td>{{ rm.average_credit_quality }}</td></tr>{% endif %}
+                    {% if rm.sharpe_ratio is not none %}<tr><td class="text-muted">Sharpe Ratio</td><td>{{ rm.sharpe_ratio }}</td></tr>{% endif %}
+                    {% if rm.max_drawdown_12m is not none %}<tr><td class="text-muted">Max Drawdown (12M)</td><td>{{ rm.max_drawdown_12m }}%</td></tr>{% endif %}
+                    {% if rm.var_95_1day is not none %}<tr><td class="text-muted">VaR (95%, 1-day)</td><td>{{ rm.var_95_1day }}%</td></tr>{% endif %}
+                    {% if rm.tracking_error is not none %}<tr><td class="text-muted">Tracking Error</td><td>{{ rm.tracking_error }}%</td></tr>{% endif %}
+                    {% if rm.irr_net is not none %}<tr><td class="text-muted">Net IRR</td><td>{{ rm.irr_net }}%</td></tr>{% endif %}
+                    {% if rm.moic is not none %}<tr><td class="text-muted">MOIC</td><td>{{ rm.moic }}x</td></tr>{% endif %}
+                    {% if rm.dpi is not none %}<tr><td class="text-muted">DPI</td><td>{{ rm.dpi }}x</td></tr>{% endif %}
+                    {% if rm.tvpi is not none %}<tr><td class="text-muted">TVPI</td><td>{{ rm.tvpi }}x</td></tr>{% endif %}
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sector Exposure -->
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header"><h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Sector Exposure</h5></div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <thead><tr><th>Sector</th><th>Weight</th><th>1M Change</th></tr></thead>
+                    <tbody>
+                        {% for s in data.sector_exposure %}
+                        <tr>
+                            <td>{{ s.sector }}</td>
+                            <td>{{ s.weight }}%</td>
+                            <td class="{% if s.change_1m > 0 %}text-success{% elif s.change_1m < 0 %}text-danger{% endif %}">
+                                {% if s.change_1m > 0 %}+{% endif %}{{ s.change_1m }}%
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Top Holdings -->
+<div class="card mb-4">
+    <div class="card-header"><h5 class="mb-0"><i class="fas fa-star me-2"></i>Top Holdings</h5></div>
+    <div class="card-body p-0">
+        <table class="table table-sm mb-0">
+            <thead><tr><th>Security</th><th>Weight</th><th>Rating</th></tr></thead>
+            <tbody>
+                {% for h in data.top_holdings %}
+                <tr>
+                    <td><strong>{{ h.name }}</strong></td>
+                    <td>{{ h.weight }}%</td>
+                    <td>{{ h.rating }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Risk Flags -->
+{% if data.risk_flags %}
+<div class="card mb-4">
+    <div class="card-header"><h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Risk Flags</h5></div>
+    <div class="card-body p-0">
+        <table class="table table-sm mb-0">
+            <thead><tr><th>Flag</th><th>Detail</th><th>Severity</th></tr></thead>
+            <tbody>
+                {% for f in data.risk_flags %}
+                <tr>
+                    <td><strong>{{ f.flag }}</strong></td>
+                    <td>{{ f.detail }}</td>
+                    <td>
+                        {% if f.severity == 'Watch' %}
+                            <span class="badge badge-watch">{{ f.severity }}</span>
+                        {% elif f.severity == 'Elevated' %}
+                            <span class="badge badge-elevated">{{ f.severity }}</span>
+                        {% else %}
+                            <span class="badge badge-info">{{ f.severity }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+<!-- Weekly Commentary -->
+{% if data.weekly_commentary %}
+<div class="card">
+    <div class="card-header"><h5 class="mb-0"><i class="fas fa-comment-alt me-2"></i>Weekly Commentary</h5></div>
+    <div class="card-body">
+        <p>{{ data.weekly_commentary }}</p>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

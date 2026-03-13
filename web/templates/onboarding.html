@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Onboarding — Oaktree GPT Demo{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="/">Dashboard</a></li><li class="breadcrumb-item active">Onboarding</li></ol></nav>
+
+<h2 class="mb-4"><i class="fas fa-clipboard-check me-2"></i>Onboarding Cases</h2>
+
+<div class="card">
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr><th>Case ID</th><th>Client</th><th>Status</th><th>Target Completion</th><th></th></tr>
+            </thead>
+            <tbody>
+                {% for c in data.get('cases', []) %}
+                <tr>
+                    <td><code>{{ c.case_id }}</code></td>
+                    <td><strong>{{ c.client_name }}</strong></td>
+                    <td>
+                        {% if c.status == 'Complete' %}
+                            <span class="badge badge-complete">{{ c.status }}</span>
+                        {% else %}
+                            <span class="badge badge-in-progress">{{ c.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ c.target_completion }}</td>
+                    <td><a href="/onboarding/{{ c.case_id }}" class="btn btn-sm btn-outline-primary">View</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

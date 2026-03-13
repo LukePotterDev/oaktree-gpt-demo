@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}{{ client.name }} — Oaktree GPT Demo{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="/">Dashboard</a></li><li class="breadcrumb-item"><a href="/clients">Clients</a></li><li class="breadcrumb-item active">{{ client.name }}</li></ol></nav>
+
+<h2 class="mb-4">{{ client.name }}</h2>
+
+<div class="row g-4 mb-4">
+    <!-- Profile -->
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header"><h5 class="mb-0"><i class="fas fa-id-card me-2"></i>Client Profile</h5></div>
+            <div class="card-body">
+                <table class="table table-sm mb-0">
+                    <tr><td class="text-muted">ID</td><td><code>{{ client.id }}</code></td></tr>
+                    <tr><td class="text-muted">Type</td><td>{{ client.type }}</td></tr>
+                    <tr><td class="text-muted">Sector</td><td>{{ client.sector }}</td></tr>
+                    <tr><td class="text-muted">AUM</td><td>${{ "%.0f"|format(client.aum / 1_000_000) }}M</td></tr>
+                    <tr><td class="text-muted">Status</td><td><span class="badge badge-active">{{ client.status }}</span></td></tr>
+                    <tr><td class="text-muted">RM</td><td>{{ client.relationship_manager }}</td></tr>
+                    <tr><td class="text-muted">Inception</td><td>{{ client.inception_date }}</td></tr>
+                    <tr><td class="text-muted">Last Review</td><td>{{ client.last_review }}</td></tr>
+                    <tr><td class="text-muted">Next Meeting</td><td>{{ client.next_meeting }}</td></tr>
+                    <tr><td class="text-muted">Risk Tolerance</td><td>{{ client.risk_tolerance }}</td></tr>
+                    <tr><td class="text-muted">Benchmark</td><td>{{ client.benchmark }}</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mandate & Contacts -->
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header"><h5 class="mb-0"><i class="fas fa-bullseye me-2"></i>Investment Mandate</h5></div>
+            <div class="card-body">
+                <p>{{ client.investment_mandate }}</p>
+            </div>
+        </div>
+        <div class="card mb-4">
+            <div class="card-header"><h5 class="mb-0"><i class="fas fa-address-book me-2"></i>Key Contacts</h5></div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <thead><tr><th>Name</th><th>Title</th><th>Email</th></tr></thead>
+                    <tbody>
+                        {% for contact in client.key_contacts %}
+                        <tr><td>{{ contact.name }}</td><td>{{ contact.title }}</td><td><code>{{ contact.email }}</code></td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header"><h5 class="mb-0"><i class="fas fa-sticky-note me-2"></i>Notes</h5></div>
+            <div class="card-body">
+                <p>{{ client.notes }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Positions -->
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="fas fa-wallet me-2"></i>Current Holdings
+            <span class="text-muted ms-2" style="font-size: 0.85rem;">
+                Total: ${{ "%.0f"|format(positions.total_market_value / 1_000_000) }}M &mdash; {{ positions.positions_count }} positions
+            </span>
+        </h5>
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Security</th>
+                    <th>Asset Class</th>
+                    <th>Market Value</th>
+                    <th>Allocation</th>
+                    <th>YTD Return</th>
+                    <th>Inception</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in positions.get('positions', []) %}
+                <tr>
+                    <td><strong>{{ p.security }}</strong></td>
+                    <td>{{ p.asset_class }}</td>
+                    <td>${{ "%.0f"|format(p.market_value / 1_000_000) }}M</td>
+                    <td>{{ p.allocation_pct }}%</td>
+                    <td class="{% if p.ytd_return > 0 %}text-success{% else %}text-danger{% endif %}">
+                        {% if p.ytd_return > 0 %}+{% endif %}{{ p.ytd_return }}%
+                    </td>
+                    <td>{{ p.inception }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}API Health — Oaktree GPT Demo{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="/">Dashboard</a></li><li class="breadcrumb-item active">API Health</li></ol></nav>
+
+<h2 class="mb-4"><i class="fas fa-heartbeat me-2"></i>API Health Check</h2>
+
+<div class="card">
+    <div class="card-body">
+        {% if api_health.get('error') %}
+            <div class="alert alert-danger"><i class="fas fa-times-circle me-2"></i>API is unreachable: {{ api_health.error }}</div>
+        {% else %}
+            <div class="alert alert-success"><i class="fas fa-check-circle me-2"></i>API is healthy</div>
+            <table class="table table-sm">
+                <tr><td class="text-muted">Status</td><td>{{ api_health.status }}</td></tr>
+                <tr><td class="text-muted">Version</td><td>{{ api_health.version }}</td></tr>
+                <tr><td class="text-muted">Timestamp</td><td>{{ api_health.timestamp }}</td></tr>
+            </table>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

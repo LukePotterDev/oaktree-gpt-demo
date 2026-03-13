@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}{{ data.case_id }} — Screening{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="/">Dashboard</a></li><li class="breadcrumb-item active">Screening {{ data.case_id }}</li></ol></nav>
+
+<h2 class="mb-2">{{ data.client_name }}</h2>
+<p class="text-muted mb-4">{{ data.type }} &middot; Case {{ data.case_id }} &middot;
+    {% if data.status == 'Cleared' %}
+        <span class="badge badge-cleared">{{ data.status }}</span>
+    {% else %}
+        <span class="badge badge-pending">{{ data.status }}</span>
+    {% endif %}
+</p>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-header"><h5 class="mb-0">Case Info</h5></div>
+            <div class="card-body">
+                <table class="table table-sm mb-0">
+                    <tr><td class="text-muted">Analyst</td><td>{{ data.analyst }}</td></tr>
+                    <tr><td class="text-muted">Completed</td><td>{{ data.completed or 'Pending' }}</td></tr>
+                    {% if data.related_onboarding %}
+                    <tr><td class="text-muted">Related Onboarding</td><td><a href="/onboarding/{{ data.related_onboarding }}">{{ data.related_onboarding }}</a></td></tr>
+                    {% endif %}
+                    <tr><td class="text-muted">Risk Rating</td><td>
+                        {% if data.results.risk_rating == 'Low' %}
+                            <span class="badge badge-cleared">{{ data.results.risk_rating }}</span>
+                        {% elif data.results.risk_rating == 'Elevated' %}
+                            <span class="badge badge-elevated">{{ data.results.risk_rating }}</span>
+                        {% else %}
+                            <span class="badge badge-pending">{{ data.results.risk_rating }}</span>
+                        {% endif %}
+                    </td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card h-100">
+            <div class="card-header"><h5 class="mb-0"><i class="fas fa-shield-alt me-2"></i>Screening Results</h5></div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <tr>
+                        <td class="text-muted">Sanctions Check</td>
+                        <td>
+                            {% if 'Clear' in data.results.sanctions_check %}
+                                <i class="fas fa-check-circle text-success me-1"></i>
+                            {% else %}
+                                <i class="fas fa-exclamation-triangle text-warning me-1"></i>
+                            {% endif %}
+                            {{ data.results.sanctions_check }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">PEP Screening</td>
+                        <td>
+                            {% if 'Clear' in data.results.pep_screening %}
+                                <i class="fas fa-check-circle text-success me-1"></i>
+                            {% elif 'Flag' in data.results.pep_screening %}
+                                <i class="fas fa-flag text-danger me-1"></i>
+                            {% endif %}
+                            {{ data.results.pep_screening }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Adverse Media</td>
+                        <td>
+                            {% if 'Clear' in data.results.adverse_media %}
+                                <i class="fas fa-check-circle text-success me-1"></i>
+                            {% elif 'Flag' in data.results.adverse_media %}
+                                <i class="fas fa-flag text-danger me-1"></i>
+                            {% endif %}
+                            {{ data.results.adverse_media }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Source of Funds</td>
+                        <td>
+                            {% if 'Verified' in data.results.source_of_funds %}
+                                <i class="fas fa-check-circle text-success me-1"></i>
+                            {% else %}
+                                <i class="fas fa-clock text-warning me-1"></i>
+                            {% endif %}
+                            {{ data.results.source_of_funds }}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if data.notes %}
+<div class="card">
+    <div class="card-header"><h5 class="mb-0"><i class="fas fa-sticky-note me-2"></i>Analyst Notes</h5></div>
+    <div class="card-body">
+        <p>{{ data.notes }}</p>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

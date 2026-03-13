@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}{{ data.issuer | replace('-', ' ') | title }} — Research{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="/">Dashboard</a></li><li class="breadcrumb-item"><a href="/research">Research</a></li><li class="breadcrumb-item active">{{ data.issuer | replace('-', ' ') | title }}</li></ol></nav>
+
+<h2 class="mb-4">{{ data.issuer | replace('-', ' ') | title }}</h2>
+
+<!-- Research Notes -->
+<h4 class="mb-3"><i class="fas fa-file-alt me-2"></i>Analyst Notes</h4>
+{% for note in data.get('notes', []) %}
+<div class="card mb-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <div>
+            <strong>{{ note.title }}</strong>
+            <span class="text-muted ms-2">{{ note.analyst }} &middot; {{ note.date }}</span>
+        </div>
+        <div>
+            <span class="badge {% if note.rating == 'Overweight' %}badge-active{% else %}badge-pending{% endif %}">{{ note.rating }}</span>
+            <span class="badge {% if note.conviction == 'High' %}badge-info{% else %}badge-pending{% endif %} ms-1">{{ note.conviction }} Conviction</span>
+        </div>
+    </div>
+    <div class="card-body">
+        <p>{{ note.summary }}</p>
+    </div>
+</div>
+{% endfor %}
+
+<!-- Market Events -->
+{% if events and not events.get('error') %}
+<h4 class="mt-4 mb-3"><i class="fas fa-bolt me-2"></i>Market Events & Updates</h4>
+{% for event in events.get('events', []) %}
+<div class="card mb-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <div>
+            <span class="badge {% if event.type == 'Market Event' %}badge-info{% elif event.type == 'Fund Update' %}badge-active{% else %}badge-pending{% endif %} me-2">{{ event.type }}</span>
+            <strong>{{ event.headline }}</strong>
+        </div>
+        <span class="text-muted">{{ event.date }}</span>
+    </div>
+    <div class="card-body">
+        <p>{{ event.detail }}</p>
+        <div class="d-flex gap-3">
+            <small><strong>Impact:</strong> {{ event.impact }}</small>
+            <small><strong>Relevance:</strong> <span class="badge {% if event.relevance == 'High' %}badge-elevated{% else %}badge-pending{% endif %}">{{ event.relevance }}</span></small>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+{% endblock %}

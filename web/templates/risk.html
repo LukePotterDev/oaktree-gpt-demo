@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Risk — Oaktree GPT Demo{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="/">Dashboard</a></li><li class="breadcrumb-item active">Risk</li></ol></nav>
+
+<h2 class="mb-4"><i class="fas fa-shield-alt me-2"></i>Portfolio Composites</h2>
+
+<div class="row g-4">
+    {% for p in data.get('portfolios', []) %}
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">{{ p.name }}</h5>
+                <div class="d-flex gap-4 mb-3">
+                    <div><span class="text-muted">AUM:</span> ${{ "%.1f"|format(p.aum / 1_000_000_000) }}B</div>
+                    <div><span class="text-muted">YTD:</span> <span class="text-success">+{{ p.ytd }}%</span></div>
+                </div>
+                <a href="/risk/{{ p.id }}" class="btn btn-outline-primary btn-sm">Full Risk Report</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

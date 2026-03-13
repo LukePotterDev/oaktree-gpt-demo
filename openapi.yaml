@@ -1,0 +1,310 @@
+openapi: 3.0.0
+info:
+  title: Oaktree GPT 301 Demo API
+  description: |
+    Mock enterprise API for financial services workflows.
+    Simulates client data (Salesforce), research, events, onboarding,
+    compliance screening, and portfolio risk for ChatGPT Actions demo.
+  version: 2.0.0
+servers:
+  - url: https://YOUR-SERVER-URL-HERE
+    description: Replace with your deployed server URL
+
+paths:
+  /clients:
+    get:
+      operationId: listClients
+      summary: List all clients
+      description: Returns all clients with summary info (name, type, AUM, status, relationship manager).
+      responses:
+        "200":
+          description: List of clients
+      security:
+        - apiKey: []
+
+  /client/{client_id}:
+    get:
+      operationId: getClient
+      summary: Get client profile
+      description: Returns full client profile including contacts, investment mandate, risk tolerance, benchmark, and relationship notes. Use IDs like CLI-001, CLI-002.
+      parameters:
+        - name: client_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Client profile
+        "404":
+          description: Client not found
+      security:
+        - apiKey: []
+
+  /client/{client_id}/positions:
+    get:
+      operationId: getClientPositions
+      summary: Get client holdings/positions
+      description: Returns all current positions for a client including asset class, market value, allocation percentage, and YTD return.
+      parameters:
+        - name: client_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Client positions
+        "404":
+          description: No positions found
+      security:
+        - apiKey: []
+
+  /research/{issuer_slug}:
+    get:
+      operationId: getResearch
+      summary: Get research notes for an issuer
+      description: "Returns analyst research notes for a specific fund/issuer. Available slugs: oaktree-distressed-debt-v, oaktree-strategic-income, oaktree-re-opportunity-iv"
+      parameters:
+        - name: issuer_slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Research notes
+        "404":
+          description: No research found
+      security:
+        - apiKey: []
+
+  /research:
+    get:
+      operationId: listResearch
+      summary: List all available research by issuer
+      description: Returns a list of all issuers with research notes available.
+      responses:
+        "200":
+          description: Research index
+      security:
+        - apiKey: []
+
+  /events/{issuer_slug}:
+    get:
+      operationId: getEvents
+      summary: Get recent events for an issuer
+      description: "Returns recent market events, fund updates, and regulatory news for a fund/issuer. Available slugs: oaktree-distressed-debt-v, oaktree-strategic-income, oaktree-re-opportunity-iv"
+      parameters:
+        - name: issuer_slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Recent events
+        "404":
+          description: No events found
+      security:
+        - apiKey: []
+
+  /onboarding/{case_id}:
+    get:
+      operationId: getOnboarding
+      summary: Get onboarding case details
+      description: "Returns full onboarding case including documents received, missing documents, exceptions, and next steps. Available cases: ONB-2001, ONB-2002."
+      parameters:
+        - name: case_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Onboarding case details
+        "404":
+          description: Case not found
+      security:
+        - apiKey: []
+
+  /onboarding:
+    get:
+      operationId: listOnboarding
+      summary: List onboarding cases
+      description: List all onboarding cases. Optionally filter by status.
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of onboarding cases
+      security:
+        - apiKey: []
+
+  /screening/{case_id}:
+    get:
+      operationId: getScreening
+      summary: Get KYC/AML screening results
+      description: "Returns compliance screening results including sanctions, PEP, adverse media, and source of funds checks. Available cases: SCR-3001, SCR-3002."
+      parameters:
+        - name: case_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Screening results
+        "404":
+          description: Screening case not found
+      security:
+        - apiKey: []
+
+  /risk/{portfolio_id}:
+    get:
+      operationId: getRisk
+      summary: Get portfolio risk summary
+      description: "Returns risk metrics, performance, sector exposure, top holdings, risk flags, and weekly commentary. Available portfolios: STRAT-INCOME, INFRA-COINVEST."
+      parameters:
+        - name: portfolio_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Portfolio risk summary
+        "404":
+          description: Portfolio not found
+      security:
+        - apiKey: []
+
+  /risk:
+    get:
+      operationId: listPortfolios
+      summary: List portfolio composites
+      description: Returns all portfolio composites with AUM and YTD performance.
+      responses:
+        "200":
+          description: List of portfolios
+      security:
+        - apiKey: []
+
+  /crm/note:
+    post:
+      operationId: createCRMNote
+      summary: Create a CRM note
+      description: "Add a note to a client record. IMPORTANT: requires confirmation='CONFIRMED'. Always show the user what will be written and get explicit approval before calling."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [client_id, content, author, confirmation]
+              properties:
+                client_id:
+                  type: string
+                  description: Client ID (e.g., CLI-001)
+                content:
+                  type: string
+                  description: Note content
+                author:
+                  type: string
+                  description: Author name
+                confirmation:
+                  type: string
+                  description: "Must be 'CONFIRMED' to proceed"
+      responses:
+        "200":
+          description: Note created
+        "400":
+          description: Missing confirmation
+      security:
+        - apiKey: []
+
+  /compliance/case:
+    post:
+      operationId: createComplianceCase
+      summary: Open a compliance case
+      description: "Open a new compliance case. IMPORTANT: requires confirmation='CONFIRMED'. Always show the user what will be filed and get explicit approval before calling."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [client_name, case_type, description, severity, author, confirmation]
+              properties:
+                client_name:
+                  type: string
+                description:
+                  type: string
+                case_type:
+                  type: string
+                  description: "e.g., KYC Review, AML Flag, Policy Violation"
+                severity:
+                  type: string
+                  description: "Low, Medium, High, Critical"
+                author:
+                  type: string
+                confirmation:
+                  type: string
+                  description: "Must be 'CONFIRMED' to proceed"
+      responses:
+        "200":
+          description: Case opened
+        "400":
+          description: Missing confirmation
+      security:
+        - apiKey: []
+
+  /tasks/create:
+    post:
+      operationId: createTask
+      summary: Create a task
+      description: "Create a new task assignment. IMPORTANT: requires confirmation='CONFIRMED'. Always show the user what will be created and get explicit approval before calling."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, assigned_to, due_date, related_to, priority, description, confirmation]
+              properties:
+                title:
+                  type: string
+                assigned_to:
+                  type: string
+                due_date:
+                  type: string
+                  description: "YYYY-MM-DD format"
+                related_to:
+                  type: string
+                  description: "Client ID or case ID this task relates to"
+                priority:
+                  type: string
+                  description: "Low, Medium, High, Urgent"
+                description:
+                  type: string
+                confirmation:
+                  type: string
+                  description: "Must be 'CONFIRMED' to proceed"
+      responses:
+        "200":
+          description: Task created
+        "400":
+          description: Missing confirmation
+      security:
+        - apiKey: []
+
+components:
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      in: header
+      name: X-API-Key

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Research — Oaktree GPT Demo{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="/">Dashboard</a></li><li class="breadcrumb-item active">Research</li></ol></nav>
+
+<h2 class="mb-4"><i class="fas fa-chart-line me-2"></i>Research Coverage</h2>
+
+<div class="row g-4">
+    {% for i in data.get('issuers', []) %}
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">{{ i.slug | replace('-', ' ') | title }}</h5>
+                <p class="text-muted">{{ i.notes_count }} research note{{ 's' if i.notes_count != 1 }} &middot; Latest: {{ i.latest }}</p>
+                <a href="/research/{{ i.slug }}" class="btn btn-outline-primary btn-sm">View Notes & Events</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

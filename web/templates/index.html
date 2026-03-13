@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Oaktree GPT Demo{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Enterprise Data Dashboard</h2>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="stat-value">{{ clients.get('total', 0) }}</div>
+            <div class="stat-label">Active Clients</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card">
+            {% set total_aum = namespace(val=0) %}
+            {% if clients.get('clients') %}
+                {% for c in clients.clients %}
+                    {% set total_aum.val = total_aum.val + c.aum %}
+                {% endfor %}
+            {% endif %}
+            <div class="stat-value">${{ "%.1f"|format(total_aum.val / 1_000_000_000) }}B</div>
+            <div class="stat-label">Total AUM</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="stat-value">{{ onboarding.get('total', 0) }}</div>
+            <div class="stat-label">Onboarding Cases</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card">
+            {% set portfolio_count = portfolios.get('portfolios', []) | length %}
+            <div class="stat-value">{{ portfolio_count }}</div>
+            <div class="stat-label">Portfolio Composites</div>
+        </div>
+    </div>
+</div>
+
+<!-- Clients -->
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="fas fa-users me-2"></i>Clients</h5>
+        <a href="/clients" class="btn btn-sm btn-outline-secondary">View All</a>
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>AUM</th>
+                    <th>RM</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in clients.get('clients', []) %}
+                <tr>
+                    <td><a href="/client/{{ c.id }}">{{ c.id }}</a></td>
+                    <td>{{ c.name }}</td>
+                    <td>{{ c.type }}</td>
+                    <td>${{ "%.0f"|format(c.aum / 1_000_000) }}M</td>
+                    <td>{{ c.relationship_manager }}</td>
+                    <td><span class="badge badge-active">{{ c.status }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Onboarding -->
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="fas fa-clipboard-check me-2"></i>Onboarding Cases</h5>
+        <a href="/onboarding" class="btn btn-sm btn-outline-secondary">View All</a>
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr><th>Case ID</th><th>Client</th><th>Status</th><th>Target Completion</th></tr>
+            </thead>
+            <tbody>
+                {% for c in onboarding.get('cases', []) %}
+                <tr>
+                    <td><a href="/onboarding/{{ c.case_id }}">{{ c.case_id }}</a></td>
+                    <td>{{ c.client_name }}</td>
+                    <td>
+                        {% if c.status == 'Complete' %}
+                            <span class="badge badge-complete">{{ c.status }}</span>
+                        {% else %}
+                            <span class="badge badge-in-progress">{{ c.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ c.target_completion }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Portfolios -->
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="fas fa-shield-alt me-2"></i>Portfolio Composites</h5>
+        <a href="/risk" class="btn btn-sm btn-outline-secondary">View All</a>
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr><th>Portfolio</th><th>AUM</th><th>YTD Return</th></tr>
+            </thead>
+            <tbody>
+                {% for p in portfolios.get('portfolios', []) %}
+                <tr>
+                    <td><a href="/risk/{{ p.id }}">{{ p.name }}</a></td>
+                    <td>${{ "%.1f"|format(p.aum / 1_000_000_000) }}B</td>
+                    <td class="text-success">+{{ p.ytd }}%</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Research -->
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Research Coverage</h5>
+        <a href="/research" class="btn btn-sm btn-outline-secondary">View All</a>
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr><th>Issuer</th><th>Notes</th><th>Latest</th></tr>
+            </thead>
+            <tbody>
+                {% for i in research.get('issuers', []) %}
+                <tr>
+                    <td><a href="/research/{{ i.slug }}">{{ i.slug | replace('-', ' ') | title }}</a></td>
+                    <td>{{ i.notes_count }}</td>
+                    <td>{{ i.latest }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block title %}{{ data.case_id }} — Onboarding{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="/">Dashboard</a></li><li class="breadcrumb-item"><a href="/onboarding">Onboarding</a></li><li class="breadcrumb-item active">{{ data.case_id }}</li></ol></nav>
+
+<h2 class="mb-2">{{ data.client_name }}</h2>
+<p class="text-muted mb-4">{{ data.type }} &middot; Case {{ data.case_id }} &middot;
+    {% if data.status == 'Complete' %}
+        <span class="badge badge-complete">{{ data.status }}</span>
+    {% else %}
+        <span class="badge badge-in-progress">{{ data.status }}</span>
+    {% endif %}
+</p>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header"><h5 class="mb-0">Case Details</h5></div>
+            <div class="card-body">
+                <table class="table table-sm mb-0">
+                    <tr><td class="text-muted">Assigned To</td><td>{{ data.assigned_to }}</td></tr>
+                    <tr><td class="text-muted">Opened</td><td>{{ data.opened }}</td></tr>
+                    <tr><td class="text-muted">Target Completion</td><td>{{ data.target_completion }}</td></tr>
+                    <tr><td class="text-muted">Investment Amount</td><td>${{ "%.0f"|format(data.investment_amount / 1_000_000) }}M</td></tr>
+                    <tr><td class="text-muted">Products</td><td>{{ data.products | join(', ') }}</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header"><h5 class="mb-0">Next Steps</h5></div>
+            <div class="card-body">
+                <p>{{ data.next_steps }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Documents Received -->
+<div class="card mb-4">
+    <div class="card-header"><h5 class="mb-0"><i class="fas fa-check-circle me-2 text-success"></i>Documents Received ({{ data.documents.received | length }})</h5></div>
+    <div class="card-body p-0">
+        <table class="table table-sm mb-0">
+            <thead><tr><th>Document</th><th>Date Received</th><th>Status</th></tr></thead>
+            <tbody>
+                {% for doc in data.documents.received %}
+                <tr>
+                    <td>{{ doc.name }}</td>
+                    <td>{{ doc.date_received }}</td>
+                    <td>
+                        {% if doc.status == 'Approved' %}
+                            <span class="badge badge-cleared">{{ doc.status }}</span>
+                        {% else %}
+                            <span class="badge badge-pending">{{ doc.status }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Documents Missing -->
+{% if data.documents.missing %}
+<div class="card mb-4">
+    <div class="card-header"><h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2 text-warning"></i>Documents Missing ({{ data.documents.missing | length }})</h5></div>
+    <div class="card-body p-0">
+        <table class="table table-sm mb-0">
+            <thead><tr><th>Document</th><th>Required By</th><th>Status</th><th>Notes</th></tr></thead>
+            <tbody>
+                {% for doc in data.documents.missing %}
+                <tr>
+                    <td>{{ doc.name }}</td>
+                    <td>{{ doc.required_by }}</td>
+                    <td><span class="badge badge-elevated">{{ doc.status }}</span></td>
+                    <td class="text-muted">{{ doc.notes }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+<!-- Exceptions -->
+{% if data.exceptions %}
+<div class="card mb-4">
+    <div class="card-header"><h5 class="mb-0"><i class="fas fa-flag me-2 text-danger"></i>Exceptions ({{ data.exceptions | length }})</h5></div>
+    <div class="card-body p-0">
+        <table class="table table-sm mb-0">
+            <thead><tr><th>Type</th><th>Detail</th><th>Status</th><th>Raised By</th><th>Date</th></tr></thead>
+            <tbody>
+                {% for ex in data.exceptions %}
+                <tr>
+                    <td><strong>{{ ex.type }}</strong></td>
+                    <td>{{ ex.detail }}</td>
+                    <td>
+                        {% if ex.status == 'Approved' %}
+                            <span class="badge badge-cleared">{{ ex.status }}</span>
+                        {% else %}
+                            <span class="badge badge-pending">{{ ex.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ ex.raised_by }}</td>
+                    <td>{{ ex.date }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+<!-- Related Screening -->
+<div class="text-center my-4">
+    <a href="/screening/SCR-3001" class="btn btn-outline-secondary"><i class="fas fa-search me-1"></i>View KYC/AML Screening</a>
+</div>
+{% endblock %}
